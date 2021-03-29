@@ -1,0 +1,108 @@
+	<div id="pageheader">
+		<img  src="assets/images/logo.png" style="height:12vh;margin-inline-end:8rem;" title="Tamilnadu Emblem">
+   		<header style="color:#fff">  
+       		<h6 style="font-size:1.5vw"> Government of Tamil Nadu </h6>
+      		<h2 style="font-size:2vw"> GIS Data</h2>
+    	</header>
+		<img  src="assets/images/logo2.png"  style="height:10vh;margin-inline-start:9rem;" alt="PWD" title="PWD" />
+	</div>
+	<div style = "background-color: #72bf39;">
+		<nav class="navbar navbar-expand-lg  scrolling-navbar">
+            <div class="main-top top-top">
+               	<a href="#" style="float:right;display: block;text-decoration: none;padding: 5px 14px;text-align: center;color: black;" title="Logout">
+                    <i class="fa fa-sign-out-alt tngis-color" style="display: block;font-size: 24px;margin-bottom: 2px;"></i>
+                    <b>admin</b>
+                </a>
+            </div>
+        </nav>
+    </div>
+    <div class="row">
+    	<div class="ajax-loader">
+	  		<img src="assets/images/ajax-loader.gif" class="img-responsive" />
+		</div>
+		<div class="col-md-3" style="font-size:15px">
+        	<div style="max-height:65vh;">
+        		<button class="accordion" value="region_based" style="background-color:gainsboro;border-bottom: seagreen;border-style:inset;">Layers</button>
+                <div id="region_based_div" style="display:none;background-color:darkseagreen;border-style: solid;border-color:darkseagreen">
+                    <div class="form-group">
+                        <input type="checkbox" name="district" value="district" (change)="onCheckboxChange($event)">Districts
+                        <input type="checkbox" name="block" value="block" (change)="onCheckboxChange($event)">block
+                    </div>
+                </div>
+        	</div>
+        </div>
+		<div id="map" class="col-md-9" style="max-height:72vh">
+        </div><span id="status"></span>
+	</div>
+	<footer class="navbar navbar-expand-md navbar-dark fixed-bottom bg-green" style="height:3vh">
+  		<div id="footer">
+        	<h6 style="font-size:1.2vw;color:white;margin-left: 40%;;">  Powered by <img src="assets/images/logo2.png" style="height:2vh;width:1vw;padding-top:0px!important"> <a href="https://tnega.tn.gov.in/" target="blank" style="cursor: pointer; color: rgb(0, 123, 255); text-decoration: underline;">TNeGA</a></h6>
+    	</div>
+    </footer>
+    <script type="text/javascript">
+      	var highlightStyle = new ol.style.Style({
+  			fill: new ol.style.Fill({
+    			color: 'rgba(255,255,255,0.7)',
+  			}),
+  			stroke: new ol.style.Stroke({
+    			color: '#3399CC',
+    			width: 3,
+  			}),
+		});
+		var selected = null;
+		var status = document.getElementById('status');
+
+		map.on('pointermove', function (e) {
+		  	if (selected !== null) {
+		    	selected.setStyle(undefined);
+		    	selected = null;
+		  	}
+	  		map.forEachFeatureAtPixel(e.pixel, function (f) {
+	    		selected = f;
+	    		f.setStyle(highlightStyle);
+	    		return true;
+	  		});
+			if (selected) {
+			    status.innerHTML = '&nbsp;Hovering: ' + selected.get('state_name');
+			} else {
+			    status.innerHTML = '&nbsp;';
+			}
+
+		});
+      	// show layers
+      	function showhide(data){
+      		// console.log(data);
+      		if(data.value == 'district'){
+	      		if(data.checked){
+	      			
+	      			var bounce = ol.animation.bounce({
+          				resolution: map.getView().getResolution() * 2
+        			});
+        			// start the pan at the current center of the map
+			        var pan = ol.animation.pan({
+			          source: map.getView().getCenter()
+			        });
+        			map.beforeRender(bounce);
+        			map.beforeRender(pan);
+        			vectorLayer1.setVisible(true);
+	      		}else{
+	      			vectorLayer1.setVisible(false);
+	      		}
+	      	}else if(data.value == 'block'){
+	      		if(data.checked){
+	      			var bounce = ol.animation.bounce({
+          				resolution: map.getView().getResolution() * 2
+        			});
+        			// start the pan at the current center of the map
+			        var pan = ol.animation.pan({
+			          source: map.getView().getCenter()
+			        });
+        			map.beforeRender(bounce);
+        			map.beforeRender(pan);
+	      			vectorLayer2.setVisible(true);
+	      		}else{
+	      			vectorLayer2.setVisible(false);
+	      		}
+	      	}
+      	}
+    </script>
